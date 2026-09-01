@@ -99,6 +99,61 @@
     font-size:.75rem;
     padding:10px 16px 30px;
   }
+  .section-label{
+    font-size:.78rem;
+    font-weight:700;
+    color:var(--sub);
+    margin:22px 2px 10px;
+    letter-spacing:.02em;
+  }
+  .section-label:first-of-type{margin-top:2px;}
+  .download-card{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--card);
+    border:1.5px dashed var(--accent);
+    border-radius:16px;
+    padding:16px 18px;
+    text-decoration:none;
+    color:var(--text);
+    box-shadow:0 2px 10px rgba(30,40,80,.04);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .download-card:active{transform:scale(.98);}
+  .download-icon{
+    flex:0 0 auto;
+    width:42px;height:42px;
+    border-radius:50%;
+    background:var(--accent-soft);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .download-icon svg{width:20px;height:20px;stroke:var(--accent);}
+  .download-main{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    flex:1 1 auto;
+    min-width:0;
+  }
+  .download-title{
+    font-weight:800;
+    font-size:.98rem;
+    color:var(--text);
+  }
+  .download-meta{
+    font-size:.78rem;
+    color:var(--sub);
+  }
+  .download-chip{
+    flex:0 0 auto;
+    font-size:.72rem;
+    font-weight:700;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:5px 10px;
+    border-radius:20px;
+  }
   @media (min-width:768px){
     header h1{font-size:1.9rem;}
     .round{font-size:1.15rem;}
@@ -113,6 +168,23 @@
 </header>
 
 <div class="wrap">
+  <div class="section-label">학습 자료</div>
+  <a class="download-card" href="materials/정보처리기능사_필기_핵심요약.pdf" download>
+    <span class="download-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"></path>
+        <path d="M7 10l5 5 5-5"></path>
+        <path d="M5 21h14"></path>
+      </svg>
+    </span>
+    <span class="download-main">
+      <span class="download-title">필기 핵심 요약 PDF</span>
+      <span class="download-meta">19단원 · 5영역 핵심 정리본</span>
+    </span>
+    <span class="download-chip">PDF 다운로드</span>
+  </a>
+
+  <div class="section-label">모의고사</div>
   <div class="list" id="examList">
     <!-- 최신 회차가 위로 오도록 정렬 (내림차순) -->
     <a class="item" href="problems/exam_2026-09-01.html">
