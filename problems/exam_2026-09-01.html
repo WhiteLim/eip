@@ -248,14 +248,14 @@
 
 <header>
   <h1>정보처리기능사 모의고사 · 제1회</h1>
-  <p>필기 + 실기 통합 연습문제 · 총 13문항 · 2026-09-01 출제</p>
+  <p>필기 기출 유형 기반 연습문제 · 총 15문항 · 2026-09-01 출제</p>
   <a class="backlink" href="../index.html">← 문제 목록으로</a>
 </header>
 
 <div class="wrap">
   <div class="score-bar">
     <div>
-      <div>정답 <strong id="scoreCorrect">0</strong> / <span id="scoreTotal">13</span></div>
+      <div>정답 <strong id="scoreCorrect">0</strong> / <span id="scoreTotal">15</span></div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     </div>
     <div style="text-align:right;">
@@ -275,117 +275,128 @@
 const QUESTIONS = [
   {
     type:"written",
-    q:"기억장치에 액세스할 필요 없이 스택(Stack)만을 이용하여 연산을 수행하며, 오퍼랜드(Operand) 부가 없는 명령어 형식은?",
+    q:"기억장치를 액세스하지 않고 스택(Stack)만으로 연산을 수행하는, Operand부가 없는 명령어 형식은?",
     kind:"mc",
     options:["0-주소 명령어","1-주소 명령어","2-주소 명령어","3-주소 명령어"],
     answer:0,
-    explain:"0-주소 명령어는 Operand부 없이 OP-Code부만으로 구성되며, 스택에 피연산자를 넣고 빼면서 연산을 수행합니다. 1-주소는 누산기(Accumulator), 2·3-주소는 여러 개의 Operand부를 사용합니다."
+    explain:"0-주소 명령어는 Operand부 없이 연산자(OP-Code)만으로 구성되어, 스택에 자료를 넣고(PUSH) 빼면서(POP) 연산합니다. 1-주소 명령어는 누산기(Accumulator)를, 2·3-주소 명령어는 Operand부를 2개·3개 사용합니다."
   },
   {
     type:"written",
-    q:"1비트(Bit)의 정보를 기억할 수 있는 기본적인 순차논리회로 소자로 가장 적합한 것은?",
+    q:"다음 진리표와 같은 결과를 내는 논리회로는 무엇인가?\nA=0,B=0 → 출력 0 / A=0,B=1 → 출력 0 / A=1,B=0 → 출력 0 / A=1,B=1 → 출력 1",
     kind:"mc",
-    options:["디코더(Decoder)","플립플롭(Flip-Flop)","멀티플렉서(MUX)","가산기(Adder)"],
-    answer:1,
-    explain:"플립플롭(Flip-Flop)은 1비트의 정보를 기억할 수 있는 대표적인 순차논리회로 소자입니다. 디코더·멀티플렉서·가산기는 조합논리회로에 속합니다."
+    options:["AND","OR","NAND","XOR"],
+    answer:0,
+    explain:"입력 두 값이 모두 1일 때만 출력이 1이 되는 것은 AND 게이트의 진리표입니다. OR는 하나라도 1이면 1, NAND는 AND의 반대, XOR는 두 입력이 서로 다를 때 1이 출력됩니다."
   },
   {
     type:"written",
-    q:"ASCII 코드에 대한 설명으로 옳은 것은?",
+    q:"다음 중 로더(Loader)의 기능에 해당하지 않는 것은?",
+    kind:"mc",
+    options:["번역(Compile)","할당(Allocation)","재배치(Relocation)","연결(Linking)"],
+    answer:0,
+    explain:"번역(Compile)은 컴파일러(Compiler)의 역할입니다. 로더는 실행 프로그램을 주기억장치에 적재하기 위해 할당(기억공간 확보), 연결(부 프로그램 연결), 재배치(실제 주소로 변환), 적재(주기억장치에 올림) 기능을 수행합니다."
+  },
+  {
+    type:"written",
+    q:"명령어의 주소 부분에 인덱스 레지스터의 값을 더해 유효 주소를 계산하며, 2개의 레지스터를 사용해 순차적인 주소지정에 유리한 방식은?",
+    kind:"mc",
+    options:["색인(Index) 주소지정","직접(Direct) 주소지정","간접(Indirect) 주소지정","상대(Relative) 주소지정"],
+    answer:0,
+    explain:"색인(인덱스) 주소지정방식은 인덱스 레지스터의 값을 Operand에 더해 유효 주소를 구하는 방식으로, 배열처럼 순차적으로 주소를 증가시키며 접근할 때 유리합니다."
+  },
+  {
+    type:"written",
+    q:"16진수 FF를 10진수로 변환하면?",
+    kind:"mc",
+    options:["255","254","256","257"],
+    answer:0,
+    explain:"FF(16) = 15×16¹ + 15×16⁰ = 240 + 15 = 255 입니다."
+  },
+  {
+    type:"written",
+    q:"2진수 1011을 그레이 코드(Gray Code)로 변환한 값은?",
+    kind:"mc",
+    options:["1110","1010","0111","0100"],
+    answer:0,
+    explain:"그레이 코드 변환: 최상위 비트는 그대로 내려쓰고, 그 다음 비트부터는 바로 앞 2진수 비트와 XOR 연산합니다. 1⊕0=1, 0⊕1=1, 1⊕1=0 이므로 1,1,1,0 = 1110 입니다."
+  },
+  {
+    type:"written",
+    q:"누를 때마다 출력이 ON과 OFF로 서로 반대(보수)로 바뀌는 토글 스위치 형태의 동작을 하는 플립플롭은?",
+    kind:"mc",
+    options:["T 플립플롭","RS 플립플롭","D 플립플롭","JK 플립플롭"],
+    answer:0,
+    explain:"T 플립플롭은 입력이 1일 때마다 현재 상태의 보수(반대값)를 출력하는, ON/OFF가 교차되는 토글 스위치 형태의 플립플롭입니다."
+  },
+  {
+    type:"written",
+    q:"하나 이상의 기본 테이블(Table)로부터 유도되어 만들어지며, 실제 데이터를 저장하지 않는 가상 테이블은?",
+    kind:"mc",
+    options:["뷰(VIEW)","도메인(DOMAIN)","스키마(SCHEMA)","인덱스(INDEX)"],
+    answer:0,
+    explain:"뷰(VIEW)는 하나 이상의 기본 테이블로부터 유도된 가상 테이블로, 실제로 데이터를 저장하지 않지만 사용자에게는 테이블처럼 보이며 관리와 명령문 작성이 간단해지는 장점이 있습니다."
+  },
+  {
+    type:"written",
+    q:"UNIX에서 현재 작업 중인 디렉터리의 경로를 화면에 출력하는 명령어는?",
+    kind:"mc",
+    options:["pwd","ls","cd","cp"],
+    answer:0,
+    explain:"pwd(Print Working Directory)는 현재 작업 디렉터리의 전체 경로를 출력합니다. ls는 파일 목록 표시, cd는 디렉터리 이동, cp는 파일 복사 명령입니다."
+  },
+  {
+    type:"written",
+    q:"DOS(MS-DOS)에서 새로운 서브 디렉터리를 만드는 명령어는?",
+    kind:"mc",
+    options:["MD","COPY","DEL","DIR"],
+    answer:0,
+    explain:"MD(Make Directory)는 새로운 디렉터리를 생성하는 명령어입니다. COPY는 파일 복사, DEL은 파일 삭제, DIR은 파일 목록 확인 명령어입니다."
+  },
+  {
+    type:"written",
+    q:"회선 교환(Circuit Switching) 방식에 대한 설명으로 옳지 않은 것은?",
     kind:"mc",
     options:[
-      "7비트로 구성되며 Zone 3비트 + Digit 4비트로 이루어진다.",
-      "8비트로 구성되며 대형 컴퓨터의 기본 코드이다.",
-      "6비트로 구성되며 Zone 2비트 + Digit 4비트로 이루어진다.",
-      "10비트로 구성되며 통신 제어용으로는 사용하지 않는다."
+      "접속에는 짧은 시간이 소요되며 전송 지연은 길다.",
+      "고정된 대역폭을 사용하는 전송 방식이다.",
+      "실시간 전송에 적합하다.",
+      "속도나 코드 변환이 불가능하다."
     ],
     answer:0,
-    explain:"ASCII 코드는 7비트(Zone 3비트 + Digit 4비트)로 구성되며 통신 제어용·마이크로컴퓨터의 기본 코드입니다. 6비트 구성은 BCD, 8비트 구성은 EBCDIC(대형 컴퓨터용)에 해당합니다."
-  },
-  {
-    type:"written",
-    q:"DMA(Direct Memory Access)에 대한 설명으로 옳지 않은 것은?",
-    kind:"mc",
-    options:[
-      "CPU의 참여 없이 입출력장치와 메모리가 직접 데이터를 주고받는다.",
-      "인터럽트 방식보다 CPU의 부담(오버헤드)이 적다.",
-      "채널을 전혀 사용하지 않으며, 데이터 전송마다 반드시 CPU가 직접 개입해야 한다.",
-      "대량의 데이터를 고속으로 전송할 때 유리하다."
-    ],
-    answer:2,
-    explain:"DMA는 CPU의 참여(개입) 없이 입출력장치와 메모리가 직접 데이터를 주고받는 방식입니다. 따라서 '데이터 전송마다 CPU가 직접 개입해야 한다'는 설명은 DMA의 정의와 반대되는 옳지 않은 내용입니다."
-  },
-  {
-    type:"written",
-    q:"하나 이상의 기본 테이블(Table)로부터 유도되어 만들어지는, 실제로 데이터를 저장하지 않는 가상 테이블은?",
-    kind:"mc",
-    options:["도메인(Domain)","스키마(Schema)","뷰(View)","인덱스(Index)"],
-    answer:2,
-    explain:"뷰(View)는 하나 이상의 기본 테이블로부터 유도되어 만들어지는 가상 테이블로, 실제 데이터를 저장하지 않고 관리가 용이하며 명령문을 간단하게 해줍니다."
-  },
-  {
-    type:"written",
-    q:"SQL의 SELECT 문에서 검색 결과 중 중복된 행을 제거하고 한 번씩만 표시하고자 할 때 사용하는 키워드는?",
-    kind:"mc",
-    options:["UNIQUE","DISTINCT","GROUP BY","ONLY"],
-    answer:1,
-    explain:"SELECT 문에서 DISTINCT를 사용하면 중복된 튜플(행)을 제거하고 서로 다른 값만 검색합니다."
-  },
-  {
-    type:"written",
-    q:"다음 중 비선점(Non-Preemptive) 프로세스 스케줄링 기법에 해당하는 것은?",
-    kind:"mc",
-    options:["FIFO(First In First Out)","SRT(Shortest Remaining Time)","RR(Round Robin)","다단계 피드백 큐"],
-    answer:0,
-    explain:"FIFO(=FCFS)와 SJF, HRN은 비선점 스케줄링 기법입니다. SRT, RR, 다단계 큐, 다단계 피드백 큐는 선점(Preemptive) 스케줄링 기법입니다."
-  },
-  {
-    type:"written",
-    q:"OSI 7계층 중, 논리적인 연결 통로를 설정하고 오류 검출·흐름 제어·혼잡 제어를 담당하며 TCP, UDP가 속하는 계층은?",
-    kind:"mc",
-    options:["물리 계층","데이터 링크 계층","전송 계층","응용 계층"],
-    answer:2,
-    explain:"전송 계층(Transport Layer, 4계층)은 종단 간(End-to-End) 신뢰성 있는 데이터 전송을 담당하며 오류 검출, 흐름 제어, 혼잡 제어 기능을 수행합니다. 대표 프로토콜은 TCP, UDP입니다."
-  },
-  {
-    type:"written",
-    q:"정보 전송 속도를 나타내는 기본 단위로 옳은 것은?",
-    kind:"mc",
-    options:["bps","Hz","dpi","fps"],
-    answer:0,
-    explain:"정보(데이터) 전송 속도의 기본 단위는 bps(bits per second, 초당 전송 비트 수)입니다. Hz는 변조 속도(Baud)와 관련된 신호 변화 횟수의 단위입니다."
+    explain:"회선 교환 방식은 접속(회선 연결)에 비교적 긴 시간이 걸리지만, 일단 연결되면 전송 지연이 거의 없어 실시간 전송에 적합합니다. 따라서 '접속은 짧고 전송 지연은 길다'는 설명은 실제와 반대되어 옳지 않습니다."
   },
   {
     type:"practical",
-    q:"[실기 단답형] 2진수 11010을 10진수로 변환한 값을 쓰시오.",
+    q:"[실기 단답형] 2진수 11011을 8진수로 변환한 값을 쓰시오.",
     kind:"short",
-    accept:["26"],
-    answerDisplay:"26",
-    explain:"11010₂ = 1×2⁴ + 1×2³ + 0×2² + 1×2¹ + 0×2⁰ = 16 + 8 + 0 + 2 + 0 = 26 입니다."
+    accept:["33"],
+    answerDisplay:"33",
+    explain:"2진수를 8진수로 바꿀 때는 소수점 기준으로 3자리씩 묶습니다. 11011은 011 011로 묶이며, 각각 3(=011), 3(=011)이므로 8진수로 33 입니다. (11011₂ = 27₁₀ = 33₈)"
   },
   {
     type:"practical",
-    q:"[실기 단답형] '학생' 테이블에서 '학과' 값이 '컴퓨터공학과'인 학생의 '이름'을 검색하는 SQL문을 작성하시오.",
+    q:"[실기 단답형] '학생' 테이블에서 '학과' 값이 '전산과'인 레코드를 모두 삭제하는 SQL문을 작성하시오.",
     kind:"short",
-    accept:["SELECT 이름 FROM 학생 WHERE 학과='컴퓨터공학과'","SELECT 이름 FROM 학생 WHERE 학과=\"컴퓨터공학과\""],
-    answerDisplay:"SELECT 이름 FROM 학생 WHERE 학과='컴퓨터공학과';",
-    explain:"SELECT 절에 검색할 속성(이름), FROM 절에 테이블명(학생), WHERE 절에 검색 조건(학과='컴퓨터공학과')을 기술합니다. 문자 데이터는 작은따옴표(' ')로 묶습니다. 따옴표 종류나 세미콜론 유무 등 세부 표기는 채점 기준에 따라 다를 수 있으니 정답 예시와 비교해 보세요."
+    accept:["DELETE FROM 학생 WHERE 학과='전산과'","DELETE FROM 학생 WHERE 학과=\"전산과\""],
+    answerDisplay:"DELETE FROM 학생 WHERE 학과='전산과';",
+    explain:"DELETE는 레코드(행) 단위로 삭제하므로 속성명을 따로 쓰지 않습니다. FROM 절에 테이블명, WHERE 절에 삭제 조건을 기술합니다. 따옴표 종류나 세미콜론 유무는 채점 기준에 따라 다를 수 있으니 모범 답안과 비교해 보세요."
   },
   {
     type:"practical",
-    q:"[실기 단답형] 빈 스택에 대해 PUSH A → PUSH B → POP → PUSH C → POP → POP 순서로 연산을 수행할 때, POP으로 출력되는 값을 순서대로 나열하시오. (예: A, B, C)",
+    q:"[실기 단답형] 6개의 비트(bit)로 표현할 수 있는 정보의 최대 가짓수를 쓰시오.",
     kind:"short",
-    accept:["B, C, A","B,C,A","B C A"],
-    answerDisplay:"B, C, A",
-    explain:"스택은 후입선출(LIFO) 구조입니다. PUSH A→[A], PUSH B→[A,B], POP→B 출력 후 [A], PUSH C→[A,C], POP→C 출력 후 [A], POP→A 출력. 따라서 출력 순서는 B, C, A입니다."
+    accept:["64","64가지"],
+    answerDisplay:"64",
+    explain:"n개의 비트로 표현 가능한 정보의 가짓수는 2ⁿ 입니다. 6비트이므로 2⁶ = 64가지입니다."
   },
   {
     type:"practical",
-    q:"[실기 단답형] 4위상 편이변조(4-PSK, 위상 4개 = 2비트 전송)를 사용하여 1,200Baud의 속도로 전송할 때, 데이터 신호 속도(bps)를 구하시오. (단위 없이 숫자만)",
+    q:"[실기 단답형] IP 주소를 물리적 주소인 MAC 주소로 변환해주는 프로토콜의 이름(약자)을 쓰시오.",
     kind:"short",
-    accept:["2400","2,400"],
-    answerDisplay:"2400bps",
-    explain:"신호 속도(bps) = 변조 속도(Baud) × 변조 시 상태 변화 비트 수. 4위상 = 2² 이므로 상태 변화 비트 수는 2비트. 따라서 1,200 × 2 = 2,400bps 입니다."
+    accept:["ARP"],
+    answerDisplay:"ARP",
+    explain:"ARP(Address Resolution Protocol)는 네트워크상에서 IP 주소를 이용해 해당 장치의 물리적 주소(MAC 주소)를 알아내는 프로토콜입니다."
   }
 ];
 
