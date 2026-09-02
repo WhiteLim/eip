@@ -182,8 +182,13 @@
     font-family:inherit;
   }
   .short-answer input:focus{outline:2px solid var(--accent);border-color:var(--accent);}
-  .short-btn{
+  .short-btn-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
     margin-top:10px;
+  }
+  .short-btn{
     display:inline-block;
     padding:10px 18px;
     background:var(--accent);
@@ -195,6 +200,11 @@
     cursor:pointer;
   }
   .short-btn:active{opacity:.85;}
+  .short-btn.ghost{
+    background:#fff;
+    color:var(--accent);
+    border:1.5px solid var(--accent);
+  }
   .result-box{
     margin-top:12px;
     padding:12px 14px;
@@ -377,7 +387,7 @@ const QUESTIONS = [
     kind:"short",
     accept:["B2"],
     answerDisplay:"B2",
-    explain:"178을 16으로 나누면 몫 11, 나머지 2가 됩니다. 몫 11은 16진수로 B이므로, 178(10) = B2(16) 입니다."
+    explain:"① 10진수를 16진수로 바꿀 때는 몫이 16보다 작아질 때까지 계속 16으로 나누고, 나머지를 아래에서 위로(역순으로) 나열합니다.\n② 178÷16=11···나머지 2\n③ 11÷16=0···나머지 11(16진수로 B)\n④ 나중에 구한 나머지부터 앞에 쓰면 B, 2 → B2(16) 입니다.\n⑤ 검산: B2(16)=11×16¹+2×16⁰=176+2=178(10)로 일치합니다."
   },
   {
     type:"practical",
@@ -385,7 +395,7 @@ const QUESTIONS = [
     kind:"short",
     accept:["UPDATE 사원 SET 급여=급여*1.2 WHERE 직급='과장'","UPDATE 사원 SET 급여 = 급여 * 1.2 WHERE 직급='과장'","UPDATE 사원 SET 급여=급여*1.2 WHERE 직급=\"과장\""],
     answerDisplay:"UPDATE 사원 SET 급여 = 급여 * 1.2 WHERE 직급='과장';",
-    explain:"UPDATE 문은 'UPDATE 테이블명 SET 속성명=변경값 WHERE 조건'의 형식을 사용합니다. 급여를 20% 인상하는 것은 기존 급여에 1.2를 곱하는 것과 같으므로 SET 급여 = 급여 * 1.2 로 작성합니다."
+    explain:"① UPDATE 문은 'UPDATE 테이블명 SET 속성명=변경값 WHERE 조건;' 형식으로, 기존 행의 특정 속성 값을 수정할 때 사용합니다.\n② '급여를 20% 인상'한다는 것은 원래 급여에 1.2를 곱한 값으로 바꾼다는 의미이므로 SET 급여 = 급여 * 1.2 로 표현합니다.\n③ WHERE 절이 없으면 테이블의 모든 사원 급여가 인상되므로, '직급=과장' 조건으로 대상을 한정해야 합니다.\n④ 문자열 조건 값(과장)은 작은따옴표로 감싸는 것이 표준이며, 큰따옴표를 허용하는 DBMS도 있습니다."
   },
   {
     type:"practical",
@@ -393,7 +403,7 @@ const QUESTIONS = [
     kind:"short",
     accept:["4800","4,800"],
     answerDisplay:"4800bps",
-    explain:"신호 속도(bps) = 변조 속도(Baud) × 변조 시 상태 변화 비트 수. 8위상 = 2³ 이므로 상태 변화 비트 수는 3비트. 따라서 1,600 × 3 = 4,800bps 입니다."
+    explain:"① 데이터 신호 속도(bps) = 변조 속도(Baud) × 변조 시 1회 신호 변화당 전송 비트 수 입니다.\n② 위상 편이 변조는 표현 가능한 위상 수가 2ⁿ이면, 한 번의 신호 변화로 n비트를 전송할 수 있습니다.\n③ 8위상은 2³이므로 n=3비트를 전송합니다.\n④ 따라서 1,600Baud × 3bit = 4,800bps 입니다."
   },
   {
     type:"practical",
@@ -401,7 +411,7 @@ const QUESTIONS = [
     kind:"short",
     accept:["15"],
     answerDisplay:"15",
-    explain:"망형(Mesh) 토폴로지에서 노드가 n개일 때 필요한 회선의 수는 n(n-1)/2 입니다. 노드가 6개이므로 6×5/2 = 15개의 회선이 필요합니다."
+    explain:"① 망형(Mesh) 토폴로지는 모든 노드가 서로 1:1로 직접 연결되는 구조입니다.\n② 노드가 n개일 때 필요한 회선 수는 조합 공식 nC2 = n(n-1)/2 로 구합니다.\n③ n=6이므로 6×5/2 = 30/2 = 15개의 회선이 필요합니다.\n④ 참고: 성형(Star)은 중앙 노드 1개와 나머지 (n-1)개만 연결하므로 회선 수가 n-1로 훨씬 적습니다."
   }
 ];
 
@@ -478,9 +488,14 @@ function renderQuestion(item, idx){
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = '정답을 입력하세요';
+    const btnRow = document.createElement('div');
+    btnRow.className = 'short-btn-row';
     const btn = document.createElement('button');
     btn.className = 'short-btn';
     btn.textContent = '정답 확인';
+    const explainBtn = document.createElement('button');
+    explainBtn.className = 'short-btn ghost';
+    explainBtn.textContent = '해설 보기';
     const resultBox = document.createElement('div');
     resultBox.className = 'result-box';
 
@@ -502,9 +517,12 @@ function renderQuestion(item, idx){
 
     btn.addEventListener('click', check);
     input.addEventListener('keydown', (e) => { if(e.key === 'Enter') check(); });
+    explainBtn.addEventListener('click', () => { explain.classList.add('show'); });
 
+    btnRow.appendChild(btn);
+    btnRow.appendChild(explainBtn);
     saWrap.appendChild(input);
-    saWrap.appendChild(btn);
+    saWrap.appendChild(btnRow);
     saWrap.appendChild(resultBox);
     card.appendChild(saWrap);
   }
