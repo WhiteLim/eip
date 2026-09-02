@@ -508,11 +508,25 @@ function renderQuestion(item, idx){
   quizEl.appendChild(card);
 }
 
+function shuffleForRender(item){
+  if(item.kind !== 'mc') return item;
+  const tagged = item.options.map((opt, i) => ({opt, isAnswer: i === item.answer}));
+  for(let i = tagged.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [tagged[i], tagged[j]] = [tagged[j], tagged[i]];
+  }
+  return {
+    ...item,
+    options: tagged.map(t => t.opt),
+    answer: tagged.findIndex(t => t.isAnswer)
+  };
+}
+
 function renderAll(){
   quizEl.innerHTML = '';
   answered = new Array(QUESTIONS.length).fill(false);
   correctCount = 0;
-  QUESTIONS.forEach((item, idx) => renderQuestion(item, idx));
+  QUESTIONS.map(shuffleForRender).forEach((item, idx) => renderQuestion(item, idx));
   updateScore();
 }
 
