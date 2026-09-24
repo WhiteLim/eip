@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>정보처리기능사 모의고사 제3회</title>
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --text:#1c2331;
+    --sub:#5b6472;
+    --accent:#3457d5;
+    --accent-soft:#e8edff;
+    --correct:#1f9d55;
+    --correct-bg:#e6f7ed;
+    --wrong:#e0483e;
+    --wrong-bg:#fdeceb;
+    --border:#e3e6ee;
+    --badge-written:#3457d5;
+    --badge-practical:#c2621a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55;
+    padding-bottom:60px;
+  }
+  header{
+    background:linear-gradient(135deg,#3457d5,#5a7bff);
+    color:#fff;
+    padding:28px 20px 24px;
+    text-align:center;
+  }
+  header h1{
+    margin:0 0 6px;
+    font-size:1.4rem;
+    font-weight:800;
+  }
+  header p{
+    margin:0;
+    font-size:.85rem;
+    opacity:.9;
+  }
+  .backlink{
+    display:inline-block;
+    margin-top:14px;
+    font-size:.8rem;
+    color:#fff;
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.6);
+    padding:6px 14px;
+    border-radius:20px;
+  }
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:18px 14px 0;
+  }
+  .score-bar{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:0 0 18px;
+    box-shadow:0 4px 14px rgba(30,40,80,.06);
+    font-size:.85rem;
+  }
+  .score-bar strong{color:var(--accent);font-size:1rem;}
+  .progress-track{
+    height:6px;
+    background:var(--accent-soft);
+    border-radius:6px;
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    transition:width .3s ease;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:18px 16px 20px;
+    margin-bottom:16px;
+    box-shadow:0 2px 10px rgba(30,40,80,.04);
+  }
+  .card-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .qnum{
+    font-weight:800;
+    color:var(--accent);
+    font-size:.95rem;
+  }
+  .badge{
+    font-size:.68rem;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+    color:#fff;
+  }
+  .badge.written{background:var(--badge-written);}
+  .badge.practical{background:var(--badge-practical);}
+  .qtext{
+    font-size:1rem;
+    font-weight:600;
+    margin:4px 0 14px;
+    white-space:pre-line;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--border);
+    border-radius:12px;
+    background:#fbfcff;
+    font-size:.92rem;
+    color:var(--text);
+    cursor:pointer;
+    transition:all .15s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .opt:active{transform:scale(.98);}
+  .opt .oidx{
+    flex:0 0 auto;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:.75rem;
+    font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .opt.correct{
+    border-color:var(--correct);
+    background:var(--correct-bg);
+    color:var(--correct);
+  }
+  .opt.correct .oidx{background:var(--correct);color:#fff;}
+  .opt.wrong{
+    border-color:var(--wrong);
+    background:var(--wrong-bg);
+    color:var(--wrong);
+  }
+  .opt.wrong .oidx{background:var(--wrong);color:#fff;}
+  .opt.disabled{cursor:default;}
+  .opt.dim{opacity:.5;}
+
+  .short-answer input{
+    width:100%;
+    padding:12px 14px;
+    font-size:.95rem;
+    border:1.5px solid var(--border);
+    border-radius:12px;
+    background:#fbfcff;
+    color:var(--text);
+    font-family:inherit;
+  }
+  .short-answer input:focus{outline:2px solid var(--accent);border-color:var(--accent);}
+  .short-btn{
+    margin-top:10px;
+    display:inline-block;
+    padding:10px 18px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-size:.88rem;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .short-btn:active{opacity:.85;}
+  .result-box{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:12px;
+    font-size:.88rem;
+    display:none;
+  }
+  .result-box.show{display:block;}
+  .result-box.ok{background:var(--correct-bg);color:var(--correct);}
+  .result-box.no{background:var(--wrong-bg);color:var(--wrong);}
+  .result-box .rlabel{font-weight:800;margin-bottom:4px;}
+  .explain{
+    margin-top:12px;
+    padding:12px 14px;
+    background:#f7f8fc;
+    border-left:3px solid var(--accent);
+    border-radius:8px;
+    font-size:.85rem;
+    color:var(--sub);
+    display:none;
+  }
+  .explain.show{display:block;}
+  .explain b{color:var(--text);}
+
+  .reset-wrap{
+    text-align:center;
+    margin:26px 0 10px;
+  }
+  .reset-btn{
+    padding:12px 26px;
+    background:#fff;
+    border:1.5px solid var(--accent);
+    color:var(--accent);
+    border-radius:24px;
+    font-weight:700;
+    font-size:.9rem;
+    cursor:pointer;
+  }
+
+  @media (min-width:600px){
+    .qtext{font-size:1.08rem;}
+    .opt{font-size:.96rem;}
+  }
+  @media (min-width:768px){
+    header h1{font-size:1.7rem;}
+    .card{padding:24px 26px 26px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>정보처리기능사 모의고사 · 제3회</h1>
+  <p>필기 기출 유형 기반 연습문제 · 총 15문항 · 2026-09-24 출제</p>
+  <a class="backlink" href="../index.html">← 문제 목록으로</a>
+</header>
+
+<div class="wrap">
+  <div class="score-bar">
+    <div>
+      <div>정답 <strong id="scoreCorrect">0</strong> / <span id="scoreTotal">15</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div style="text-align:right;">
+      <div id="scorePercent" style="font-weight:800;color:var(--accent);font-size:1.15rem;">0%</div>
+      <div style="color:var(--sub);">진행률</div>
+    </div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="reset-wrap">
+    <button class="reset-btn" id="resetBtn">다시 풀기</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    type:"written",
+    q:"CPU의 레지스터 중, 현재 실행 중인 명령어의 내용을 기억하는 레지스터는?",
+    kind:"mc",
+    options:["프로그램 카운터(PC)", "명령 레지스터(IR)", "기억장치 버퍼 레지스터(MBR)", "프로그램 상태 워드(PSW)"],
+    answer:1,
+    explain:"명령 레지스터(IR, Instruction Register)는 현재 실행 중인 명령어를 저장합니다. PC는 다음에 실행할 명령어의 번지, MBR은 기억장치와 주고받는 데이터, PSW는 시스템의 상태 정보를 기억합니다."
+  },
+  {
+    type:"written",
+    q:"명령어 실행 사이클(Instruction Cycle)의 올바른 순서는?",
+    kind:"mc",
+    options:[
+      "실행 → 인출 → 간접 → 인터럽트",
+      "인출 → 간접 → 실행 → 인터럽트",
+      "인터럽트 → 인출 → 실행 → 간접",
+      "간접 → 인출 → 인터럽트 → 실행"
+    ],
+    answer:1,
+    explain:"명령어 사이클은 명령어를 읽어오는 인출(Fetch), 간접 주소일 경우 유효 주소를 구하는 간접(Indirect), 명령어를 실행하는 실행(Execute), 마지막으로 인터럽트 발생 여부를 확인하는 인터럽트(Interrupt) 단계 순으로 진행됩니다."
+  },
+  {
+    type:"written",
+    q:"입출력 시 주기억장치의 일부를 임시 저장 공간으로 사용하며, 하나의 작업(단일 작업)에서 CPU와 입출력장치의 속도 차이를 완화하는 기법은?",
+    kind:"mc",
+    options:["스풀링(Spooling)", "버퍼링(Buffering)", "캐싱(Caching)", "페이징(Paging)"],
+    answer:1,
+    explain:"버퍼링은 주기억장치의 일부를 버퍼로 사용하여 단일 작업 내에서 CPU와 입출력장치 간 속도 차이를 줄이는 기법입니다. 스풀링은 보조기억장치를 이용해 다중 작업 환경에서 사용됩니다."
+  },
+  {
+    type:"written",
+    q:"디스크 팩에서 디스크 표면 상의 여러 헤드가 동시에 접근할 수 있는, 같은 위치에 있는 트랙들의 집합을 의미하는 것은?",
+    kind:"mc",
+    options:["섹터(Sector)", "실린더(Cylinder)", "클러스터(Cluster)", "블록(Block)"],
+    answer:1,
+    explain:"실린더는 여러 장의 디스크 표면에서 같은 반지름(위치)에 있는 트랙들을 모아 놓은 것으로, 디스크 팩의 트랙 수는 곧 실린더의 수와 같습니다."
+  },
+  {
+    type:"written",
+    q:"데이터베이스 스키마의 3단계 구조 중, 사용자 개개인이나 응용 프로그램의 입장에서 필요로 하는 데이터베이스의 논리적 구조를 정의한 것은?",
+    kind:"mc",
+    options:["개념 스키마", "외부 스키마", "내부 스키마", "물리 스키마"],
+    answer:1,
+    explain:"외부 스키마(서브 스키마)는 개별 사용자나 응용 프로그램 관점에서 필요한 데이터베이스의 논리적 구조입니다. 개념 스키마는 조직 전체의 논리적 구조, 내부 스키마는 물리적 저장 구조를 정의합니다."
+  },
+  {
+    type:"written",
+    q:"관계형 데이터베이스의 릴레이션(테이블)에서, 하나의 튜플(행)을 구성하는 속성(열)의 개수를 의미하는 용어는?",
+    kind:"mc",
+    options:["기수(Cardinality)", "차수(Degree)", "도메인(Domain)", "인스턴스(Instance)"],
+    answer:1,
+    explain:"차수(Degree)는 릴레이션을 구성하는 속성(컬럼)의 개수를 의미합니다. 기수(Cardinality)는 튜플(행)의 개수를 의미하며, 도메인은 속성이 가질 수 있는 값의 범위입니다."
+  },
+  {
+    type:"written",
+    q:"SQL의 DROP 문에서, 삭제하려는 개체를 다른 개체가 참조하고 있을 경우 삭제를 수행하지 않고 취소하는 옵션은?",
+    kind:"mc",
+    options:["CASCADE", "RESTRICT", "REVOKE", "ROLLBACK"],
+    answer:1,
+    explain:"RESTRICT 옵션은 삭제 대상 개체를 다른 개체가 참조하고 있으면 삭제를 취소합니다. 반대로 CASCADE는 참조하는 개체까지 연쇄적으로 함께 삭제합니다."
+  },
+  {
+    type:"written",
+    q:"운영체제 발달 과정 중, 여러 사용자의 작업을 짧은 시간 단위(Time Slice)로 번갈아 처리하여 각 사용자가 컴퓨터를 독점하는 것처럼 느끼게 하는 방식은?",
+    kind:"mc",
+    options:["일괄 처리 시스템", "다중 프로그래밍 시스템", "시분할 시스템(Time Sharing)", "실시간 처리 시스템"],
+    answer:2,
+    explain:"시분할 시스템(Time Sharing System)은 CPU 시간을 짧은 시간 단위로 나누어 여러 사용자에게 번갈아 할당함으로써, 각 사용자가 마치 컴퓨터를 독점하고 있는 것처럼 느끼게 하는 방식입니다."
+  },
+  {
+    type:"written",
+    q:"CPU 스케줄링 기법 중, 남은 처리 시간이 가장 짧은 작업에 우선순위를 부여하며 새로운 작업이 도착하면 현재 작업과 남은 시간을 비교해 선점이 가능한 기법은?",
+    kind:"mc",
+    options:["FIFO(FCFS)", "SJF(Shortest Job First)", "SRT(Shortest Remaining Time)", "라운드 로빈(RR)"],
+    answer:2,
+    explain:"SRT는 SJF의 선점형 버전으로, 새로운 작업이 도착할 때마다 현재 실행 중인 작업의 남은 처리 시간과 비교하여 더 짧은 작업이 있으면 선점합니다. SJF는 비선점형이며, RR은 시간 할당량 기반으로 순환 처리합니다."
+  },
+  {
+    type:"written",
+    q:"MS-DOS의 부팅 과정에서 전원을 켠 후 가장 먼저 주기억장치에 적재(로드)되는 시스템 파일은?",
+    kind:"mc",
+    options:["COMMAND.COM", "IO.SYS", "AUTOEXEC.BAT", "CONFIG.SYS"],
+    answer:1,
+    explain:"MS-DOS 부팅 순서는 IO.SYS → MSDOS.SYS → CONFIG.SYS → COMMAND.COM → AUTOEXEC.BAT 순입니다. IO.SYS가 가장 먼저 적재되어 시스템 초기화를 담당합니다."
+  },
+  {
+    type:"written",
+    q:"오류 검출 코드 중, 2비트까지의 오류를 검출하고 1비트의 오류는 스스로 교정(정정)까지 할 수 있는 코드는?",
+    kind:"mc",
+    options:["패리티 비트(Parity Bit)", "해밍 코드(Hamming Code)", "그레이 코드(Gray Code)", "체크섬(Checksum)"],
+    answer:1,
+    explain:"해밍 코드는 2비트까지의 오류를 검출하고, 1비트 오류는 자체적으로 교정할 수 있는 코드입니다. 패리티 비트는 1비트 오류 검출만 가능하며 교정은 불가능합니다."
+  },
+  {
+    type:"practical",
+    q:"[실기 단답형] 8비트 2진수 00001010의 2의 보수(2's Complement)를 2진수로 쓰시오.",
+    kind:"short",
+    accept:["11110110"],
+    answerDisplay:"11110110",
+    explain:"1의 보수는 모든 비트를 반전시켜 11110101이 되고, 여기에 1을 더하면(2의 보수) 11110110이 됩니다."
+  },
+  {
+    type:"practical",
+    q:"[실기 단답형] IP 주소 200.100.50.1은 클래스풀 주소 체계에서 어느 클래스(Class)에 속하는지 알파벳 한 글자로 쓰시오.",
+    kind:"short",
+    accept:["C","클래스 C","클래스C","Class C"],
+    answerDisplay:"C",
+    explain:"클래스 C는 첫 옥텟 값이 192~223 범위입니다. 200.100.50.1의 첫 옥텟이 200이므로 Class C에 해당합니다."
+  },
+  {
+    type:"practical",
+    q:"[실기 단답형] PCM(펄스 부호 변조) 과정 중, 연속적인 아날로그 신호를 일정한 시간 간격으로 추출하는 첫 번째 단계의 명칭을 쓰시오.",
+    kind:"short",
+    accept:["표본화","표본화(Sampling)","Sampling","샘플링"],
+    answerDisplay:"표본화(Sampling)",
+    explain:"PCM은 표본화(Sampling) → 양자화(Quantization) → 부호화(Encoding) 순으로 진행됩니다. 표본화는 아날로그 신호를 일정 시간 간격으로 추출하는 단계입니다."
+  },
+  {
+    type:"practical",
+    q:"[실기 단답형] UNIX에서 소유자에게 읽기·쓰기·실행(rwx), 그룹에게 읽기·실행(r-x), 기타 사용자에게 읽기(r--) 권한을 부여할 때 chmod에 사용할 8진수 권한값을 쓰시오. (단위 없이 숫자만)",
+    kind:"short",
+    accept:["754"],
+    answerDisplay:"754",
+    explain:"rwx=4+2+1=7, r-x=4+0+1=5, r--=4+0+0=4 이므로, 소유자·그룹·기타 순서로 754가 됩니다."
+  }
+];
+
+const quizEl = document.getElementById('quiz');
+let answered = new Array(QUESTIONS.length).fill(false);
+let correctCount = 0;
+
+function normalize(str){
+  return str.trim().toLowerCase().replace(/\s+/g,' ').replace(/[;；]+$/,'').trim();
+}
+
+function updateScore(){
+  const total = QUESTIONS.length;
+  const answeredCount = answered.filter(Boolean).length;
+  document.getElementById('scoreCorrect').textContent = correctCount;
+  document.getElementById('scoreTotal').textContent = total;
+  const pct = total ? Math.round((answeredCount/total)*100) : 0;
+  document.getElementById('scorePercent').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function renderQuestion(item, idx){
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const head = document.createElement('div');
+  head.className = 'card-head';
+  const qnum = document.createElement('span');
+  qnum.className = 'qnum';
+  qnum.textContent = 'Q' + (idx+1);
+  const badge = document.createElement('span');
+  badge.className = 'badge ' + (item.type === 'written' ? 'written' : 'practical');
+  badge.textContent = item.type === 'written' ? '필기' : '실기';
+  head.appendChild(qnum);
+  head.appendChild(badge);
+  card.appendChild(head);
+
+  const qtext = document.createElement('div');
+  qtext.className = 'qtext';
+  qtext.textContent = item.q;
+  card.appendChild(qtext);
+
+  const explain = document.createElement('div');
+  explain.className = 'explain';
+  explain.innerHTML = '<b>해설</b><br>' + item.explain;
+
+  if(item.kind === 'mc'){
+    const optWrap = document.createElement('div');
+    optWrap.className = 'options';
+    item.options.forEach((optText, oi) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.innerHTML = '<span class="oidx">' + (oi+1) + '</span><span>' + optText + '</span>';
+      btn.addEventListener('click', () => {
+        if(answered[idx]) return;
+        answered[idx] = true;
+        const isCorrect = oi === item.answer;
+        if(isCorrect) correctCount++;
+        Array.from(optWrap.children).forEach((b, bi) => {
+          b.classList.add('disabled');
+          if(bi === item.answer) b.classList.add('correct');
+          else if(bi === oi) b.classList.add('wrong');
+          else b.classList.add('dim');
+        });
+        explain.classList.add('show');
+        updateScore();
+      });
+      optWrap.appendChild(btn);
+    });
+    card.appendChild(optWrap);
+  } else {
+    const saWrap = document.createElement('div');
+    saWrap.className = 'short-answer';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = '정답을 입력하세요';
+    const btn = document.createElement('button');
+    btn.className = 'short-btn';
+    btn.textContent = '정답 확인';
+    const resultBox = document.createElement('div');
+    resultBox.className = 'result-box';
+
+    function check(){
+      if(answered[idx]) return;
+      answered[idx] = true;
+      const userVal = normalize(input.value || '');
+      const isCorrect = item.accept.some(a => normalize(a) === userVal);
+      if(isCorrect) correctCount++;
+      resultBox.classList.add('show');
+      resultBox.classList.add(isCorrect ? 'ok' : 'no');
+      resultBox.innerHTML = '<div class="rlabel">' + (isCorrect ? '✓ 정답입니다' : '✗ 오답입니다') +
+        '</div>모범 답안: ' + item.answerDisplay;
+      input.disabled = true;
+      btn.disabled = true;
+      explain.classList.add('show');
+      updateScore();
+    }
+
+    btn.addEventListener('click', check);
+    input.addEventListener('keydown', (e) => { if(e.key === 'Enter') check(); });
+
+    saWrap.appendChild(input);
+    saWrap.appendChild(btn);
+    saWrap.appendChild(resultBox);
+    card.appendChild(saWrap);
+  }
+
+  card.appendChild(explain);
+  quizEl.appendChild(card);
+}
+
+function shuffleForRender(item){
+  if(item.kind !== 'mc') return item;
+  const tagged = item.options.map((opt, i) => ({opt, isAnswer: i === item.answer}));
+  for(let i = tagged.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [tagged[i], tagged[j]] = [tagged[j], tagged[i]];
+  }
+  return {
+    ...item,
+    options: tagged.map(t => t.opt),
+    answer: tagged.findIndex(t => t.isAnswer)
+  };
+}
+
+function renderAll(){
+  quizEl.innerHTML = '';
+  answered = new Array(QUESTIONS.length).fill(false);
+  correctCount = 0;
+  QUESTIONS.map(shuffleForRender).forEach((item, idx) => renderQuestion(item, idx));
+  updateScore();
+}
+
+document.getElementById('resetBtn').addEventListener('click', renderAll);
+
+renderAll();
+</script>
+
+</body>
+</html>
