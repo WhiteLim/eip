@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>정보처리기능사 모의고사 제3회</title>
+<style>
+  :root{
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --text:#1c2331;
+    --sub:#5b6472;
+    --accent:#3457d5;
+    --accent-soft:#e8edff;
+    --correct:#1f9d55;
+    --correct-bg:#e6f7ed;
+    --wrong:#e0483e;
+    --wrong-bg:#fdeceb;
+    --border:#e3e6ee;
+    --badge-written:#3457d5;
+    --badge-practical:#c2621a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55;
+    padding-bottom:60px;
+  }
+  header{
+    background:linear-gradient(135deg,#3457d5,#5a7bff);
+    color:#fff;
+    padding:28px 20px 24px;
+    text-align:center;
+  }
+  header h1{
+    margin:0 0 6px;
+    font-size:1.4rem;
+    font-weight:800;
+  }
+  header p{
+    margin:0;
+    font-size:.85rem;
+    opacity:.9;
+  }
+  .backlink{
+    display:inline-block;
+    margin-top:14px;
+    font-size:.8rem;
+    color:#fff;
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.6);
+    padding:6px 14px;
+    border-radius:20px;
+  }
+  .wrap{
+    max-width:720px;
+    margin:0 auto;
+    padding:18px 14px 0;
+  }
+  .score-bar{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:12px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:0 0 18px;
+    box-shadow:0 4px 14px rgba(30,40,80,.06);
+    font-size:.85rem;
+  }
+  .score-bar strong{color:var(--accent);font-size:1rem;}
+  .progress-track{
+    height:6px;
+    background:var(--accent-soft);
+    border-radius:6px;
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    transition:width .3s ease;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:18px 16px 20px;
+    margin-bottom:16px;
+    box-shadow:0 2px 10px rgba(30,40,80,.04);
+  }
+  .card-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .qnum{
+    font-weight:800;
+    color:var(--accent);
+    font-size:.95rem;
+  }
+  .badge{
+    font-size:.68rem;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+    color:#fff;
+  }
+  .badge.written{background:var(--badge-written);}
+  .badge.practical{background:var(--badge-practical);}
+  .qtext{
+    font-size:1rem;
+    font-weight:600;
+    margin:4px 0 14px;
+    white-space:pre-line;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid var(--border);
+    border-radius:12px;
+    background:#fbfcff;
+    font-size:.92rem;
+    color:var(--text);
+    cursor:pointer;
+    transition:all .15s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .opt:active{transform:scale(.98);}
+  .opt .oidx{
+    flex:0 0 auto;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:.75rem;
+    font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .opt.correct{
+    border-color:var(--correct);
+    background:var(--correct-bg);
+    color:var(--correct);
+  }
+  .opt.correct .oidx{background:var(--correct);color:#fff;}
+  .opt.wrong{
+    border-color:var(--wrong);
+    background:var(--wrong-bg);
+    color:var(--wrong);
+  }
+  .opt.wrong .oidx{background:var(--wrong);color:#fff;}
+  .opt.disabled{cursor:default;}
+  .opt.dim{opacity:.5;}
+
+  .short-answer input{
+    width:100%;
+    padding:12px 14px;
+    font-size:.95rem;
+    border:1.5px solid var(--border);
+    border-radius:12px;
+    background:#fbfcff;
+    color:var(--text);
+    font-family:inherit;
+  }
+  .short-answer input:focus{outline:2px solid var(--accent);border-color:var(--accent);}
+  .short-btn{
+    margin-top:10px;
+    display:inline-block;
+    padding:10px 18px;
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    font-size:.88rem;
+    font-weight:700;
+    cursor:pointer;
+  }
+  .short-btn:active{opacity:.85;}
+  .result-box{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:12px;
+    font-size:.88rem;
+    display:none;
+  }
+  .result-box.show{display:block;}
+  .result-box.ok{background:var(--correct-bg);color:var(--correct);}
+  .result-box.no{background:var(--wrong-bg);color:var(--wrong);}
+  .result-box .rlabel{font-weight:800;margin-bottom:4px;}
+  .explain{
+    margin-top:12px;
+    padding:12px 14px;
+    background:#f7f8fc;
+    border-left:3px solid var(--accent);
+    border-radius:8px;
+    font-size:.85rem;
+    color:var(--sub);
+    display:none;
+  }
+  .explain.show{display:block;}
+  .explain b{color:var(--text);}
+
+  .reset-wrap{
+    text-align:center;
+    margin:26px 0 10px;
+  }
+  .reset-btn{
+    padding:12px 26px;
+    background:#fff;
+    border:1.5px solid var(--accent);
+    color:var(--accent);
+    border-radius:24px;
+    font-weight:700;
+    font-size:.9rem;
+    cursor:pointer;
+  }
+
+  @media (min-width:600px){
+    .qtext{font-size:1.08rem;}
+    .opt{font-size:.96rem;}
+  }
+  @media (min-width:768px){
+    header h1{font-size:1.7rem;}
+    .card{padding:24px 26px 26px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>정보처리기능사 모의고사 · 제3회</h1>
+  <p>필기 기출 유형 기반 연습문제 · 총 15문항 · 2026-10-16 출제</p>
+  <a class="backlink" href="../index.html">← 문제 목록으로</a>
+</header>
+
+<div class="wrap">
+  <div class="score-bar">
+    <div>
+      <div>정답 <strong id="scoreCorrect">0</strong> / <span id="scoreTotal">15</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div style="text-align:right;">
+      <div id="scorePercent" style="font-weight:800;color:var(--accent);font-size:1.15rem;">0%</div>
+      <div style="color:var(--sub);">진행률</div>
+    </div>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="reset-wrap">
+    <button class="reset-btn" id="resetBtn">다시 풀기</button>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {type:"written",kind:"mc",q:"명령어 형식 중 연산 결과를 Operand1에 저장하여 원래 자료가 파괴되는 것은?",
+   options:["0 주소 명령어","1 주소 명령어","2 주소 명령어","3 주소 명령어"],answer:2,
+   explain:"2 주소 명령어는 연산 결과를 Operand1에 저장하므로 원래 자료가 파괴됩니다. 3 주소 명령어는 입력 자료가 보존되며, 0 주소는 스택, 1 주소는 누산기를 이용합니다."},
+  {type:"written",kind:"mc",q:"JK 플립플롭에서 J=1, K=1을 입력했을 때의 동작은?",
+   options:["무변화","리셋(0)","셋(1)","보수(토글)"],answer:3,
+   explain:"JK 플립플롭은 (0,0) 무변화, (0,1) 리셋, (1,0) 셋, (1,1) 보수(토글)입니다. 암기: 무·공·일·보."},
+  {type:"written",kind:"mc",q:"ASCII 코드의 구성으로 옳은 것은?",
+   options:["Zone 2비트 + Digit 4비트 (6비트)","Zone 3비트 + Digit 4비트 (7비트)","Zone 4비트 + Digit 4비트 (8비트)","Zone 3비트 + Digit 5비트 (8비트)"],answer:1,
+   explain:"ASCII는 Zone 3비트 + Digit 4비트의 7비트 코드입니다. BCD는 6비트(2+4), EBCDIC은 8비트(4+4)입니다."},
+  {type:"written",kind:"mc",q:"인터럽트의 우선순위 판별 방법 중 하드웨어 방식에 해당하는 것은?",
+   options:["폴링(Polling)","데이지 체인(Daisy Chain)","스풀링(Spooling)","매핑(Mapping)"],answer:1,
+   explain:"우선순위 판별은 폴링(소프트웨어), 데이지 체인(하드웨어), 병렬 우선 처리(하드웨어) 방식이 있습니다."},
+  {type:"written",kind:"mc",q:"관계형 데이터베이스에서 튜플(Tuple)의 개수를 나타내는 용어는?",
+   options:["차수(Degree)","기수(Cardinality)","도메인(Domain)","스키마(Schema)"],answer:1,
+   explain:"기수(Cardinality)는 튜플의 개수, 차수(Degree)는 속성(Attribute)의 개수입니다."},
+  {type:"written",kind:"mc",q:"SQL 명령어 중 DDL(데이터 정의어)에 해당하지 않는 것은?",
+   options:["CREATE","ALTER","DROP","SELECT"],answer:3,
+   explain:"DDL은 CREATE, ALTER, DROP이며, SELECT는 DML(데이터 조작어)입니다."},
+  {type:"written",kind:"mc",q:"프로세스 스케줄링 중 가장 먼저 CPU를 요청한 프로세스에게 먼저 할당하는 비선점 방식은?",
+   options:["FIFO","SRT","RR","다단계 피드백 큐"],answer:0,
+   explain:"FIFO는 먼저 도착한 프로세스에게 먼저 CPU를 할당하는 비선점 방식입니다. SRT와 RR은 선점 방식입니다."},
+  {type:"written",kind:"mc",q:"UNIX에서 시스템에 등록된 사용자 정보를 조회하는 명령어는?",
+   options:["finger","pwd","kill","fork"],answer:0,
+   explain:"finger는 시스템에 등록된 사용자 정보를 조회합니다. pwd는 현재 디렉터리, kill은 프로세스 종료, fork는 프로세스 생성입니다."},
+  {type:"written",kind:"mc",q:"펄스 코드 변조(PCM)의 송신 측 처리 순서로 옳은 것은?",
+   options:["표본화 → 양자화 → 부호화","양자화 → 표본화 → 부호화","표본화 → 부호화 → 양자화","부호화 → 표본화 → 양자화"],answer:0,
+   explain:"PCM 송신 측은 표본화 → 양자화 → 부호화(표·양·부), 수신 측은 복호화 → 여과화 순입니다."},
+  {type:"written",kind:"mc",q:"통신 프로토콜의 기본 구성 요소가 아닌 것은?",
+   options:["구문(Syntax)","의미(Semantics)","시간(Timing)","처리(Processing)"],answer:3,
+   explain:"프로토콜의 기본 요소는 구문, 의미, 시간입니다. 처리는 해당하지 않습니다."},
+  {type:"written",kind:"mc",q:"OSI 7계층 중 경로 배정(라우팅)과 네트워크 어드레싱을 담당하는 계층은?",
+   options:["물리 계층","데이터 링크 계층","네트워크 계층","전송 계층"],answer:2,
+   explain:"네트워크 계층(3계층)이 경로 배정, 중계, 네트워크 어드레싱을 담당합니다."},
+  {type:"practical",kind:"short",q:"[실기 단답형] 16진수 2A를 10진수로 변환한 값을 쓰시오. (숫자만)",
+   accept:["42"],answerDisplay:"42",explain:"2A(16) = 2×16 + 10 = 42 입니다."},
+  {type:"practical",kind:"short",q:"[실기 단답형] 2진수 1101을 그레이 코드(Gray Code)로 변환한 값을 쓰시오.",
+   accept:["1011"],answerDisplay:"1011",explain:"첫 비트는 그대로(1), 이후 인접 비트끼리 XOR: 1⊕1=0, 1⊕0=1, 0⊕1=1 → 1011 입니다."},
+  {type:"practical",kind:"short",q:"[실기 단답형] 198.0.46.201 로 시작하는 IP 주소는 몇 클래스(A/B/C/D)인지 알파벳으로 쓰시오.",
+   accept:["C","c","Class C","클래스 C"],answerDisplay:"C (Class C)",explain:"192~223으로 시작하는 주소는 Class C이며 기본 서브넷 마스크는 255.255.255.0 입니다."},
+  {type:"practical",kind:"short",q:"[실기 단답형] 변조 속도가 1,200Baud이고 4위상(2비트) 변조를 사용할 때의 신호 속도(bps)를 숫자만 쓰시오.",
+   accept:["2400"],answerDisplay:"2400bps",explain:"신호 속도 = 변조 속도 × 상태 변화 비트 수 = 1,200 × 2 = 2,400bps 입니다."}
+];
+
+const quizEl = document.getElementById('quiz');
+let answered = new Array(QUESTIONS.length).fill(false);
+let correctCount = 0;
+
+function normalize(str){
+  return str.trim().toLowerCase().replace(/\s+/g,' ').replace(/[;；]+$/,'').trim();
+}
+
+function updateScore(){
+  const total = QUESTIONS.length;
+  const answeredCount = answered.filter(Boolean).length;
+  document.getElementById('scoreCorrect').textContent = correctCount;
+  document.getElementById('scoreTotal').textContent = total;
+  const pct = total ? Math.round((answeredCount/total)*100) : 0;
+  document.getElementById('scorePercent').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function renderQuestion(item, idx){
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const head = document.createElement('div');
+  head.className = 'card-head';
+  const qnum = document.createElement('span');
+  qnum.className = 'qnum';
+  qnum.textContent = 'Q' + (idx+1);
+  const badge = document.createElement('span');
+  badge.className = 'badge ' + (item.type === 'written' ? 'written' : 'practical');
+  badge.textContent = item.type === 'written' ? '필기' : '실기';
+  head.appendChild(qnum);
+  head.appendChild(badge);
+  card.appendChild(head);
+
+  const qtext = document.createElement('div');
+  qtext.className = 'qtext';
+  qtext.textContent = item.q;
+  card.appendChild(qtext);
+
+  const explain = document.createElement('div');
+  explain.className = 'explain';
+  explain.innerHTML = '<b>해설</b><br>' + item.explain;
+
+  if(item.kind === 'mc'){
+    const optWrap = document.createElement('div');
+    optWrap.className = 'options';
+    item.options.forEach((optText, oi) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.innerHTML = '<span class="oidx">' + (oi+1) + '</span><span>' + optText + '</span>';
+      btn.addEventListener('click', () => {
+        if(answered[idx]) return;
+        answered[idx] = true;
+        const isCorrect = oi === item.answer;
+        if(isCorrect) correctCount++;
+        Array.from(optWrap.children).forEach((b, bi) => {
+          b.classList.add('disabled');
+          if(bi === item.answer) b.classList.add('correct');
+          else if(bi === oi) b.classList.add('wrong');
+          else b.classList.add('dim');
+        });
+        explain.classList.add('show');
+        updateScore();
+      });
+      optWrap.appendChild(btn);
+    });
+    card.appendChild(optWrap);
+  } else {
+    const saWrap = document.createElement('div');
+    saWrap.className = 'short-answer';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = '정답을 입력하세요';
+    const btn = document.createElement('button');
+    btn.className = 'short-btn';
+    btn.textContent = '정답 확인';
+    const resultBox = document.createElement('div');
+    resultBox.className = 'result-box';
+
+    function check(){
+      if(answered[idx]) return;
+      answered[idx] = true;
+      const userVal = normalize(input.value || '');
+      const isCorrect = item.accept.some(a => normalize(a) === userVal);
+      if(isCorrect) correctCount++;
+      resultBox.classList.add('show');
+      resultBox.classList.add(isCorrect ? 'ok' : 'no');
+      resultBox.innerHTML = '<div class="rlabel">' + (isCorrect ? '✓ 정답입니다' : '✗ 오답입니다') +
+        '</div>모범 답안: ' + item.answerDisplay;
+      input.disabled = true;
+      btn.disabled = true;
+      explain.classList.add('show');
+      updateScore();
+    }
+
+    btn.addEventListener('click', check);
+    input.addEventListener('keydown', (e) => { if(e.key === 'Enter') check(); });
+
+    saWrap.appendChild(input);
+    saWrap.appendChild(btn);
+    saWrap.appendChild(resultBox);
+    card.appendChild(saWrap);
+  }
+
+  card.appendChild(explain);
+  quizEl.appendChild(card);
+}
+
+function shuffleForRender(item){
+  if(item.kind !== 'mc') return item;
+  const tagged = item.options.map((opt, i) => ({opt, isAnswer: i === item.answer}));
+  for(let i = tagged.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [tagged[i], tagged[j]] = [tagged[j], tagged[i]];
+  }
+  return {
+    ...item,
+    options: tagged.map(t => t.opt),
+    answer: tagged.findIndex(t => t.isAnswer)
+  };
+}
+
+function renderAll(){
+  quizEl.innerHTML = '';
+  answered = new Array(QUESTIONS.length).fill(false);
+  correctCount = 0;
+  QUESTIONS.map(shuffleForRender).forEach((item, idx) => renderQuestion(item, idx));
+  updateScore();
+}
+
+document.getElementById('resetBtn').addEventListener('click', renderAll);
+
+renderAll();
+</script>
+
+</body>
+</html>
